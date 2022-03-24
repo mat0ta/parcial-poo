@@ -115,6 +115,4 @@ def aplicacion():
     retirar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], cuentas[nextId - random.randint(1, numero_de_cuentas)]['Saldo'] + random.randint(10000, 100000))
     ingresar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], random.randint(10000, 100000))
     transferir(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], random.randint(10000, 100000))
-
-aplicacion()
     
