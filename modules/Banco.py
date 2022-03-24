@@ -6,8 +6,9 @@ fake = Faker()
 cuentas = {}
 nextId = 0
 saldo_negativo_maximo = -10000
+fecha_plazo_fijo = fake.date_between(start_date=datetime.date(year=2022, month=4, day=1), end_date='+2y')
 
-def crearCuenta(numero_de_cuentas = 1, tipo = 'Normal'):
+def crearCuenta(numero_de_cuentas = 10, tipo = 'VIP'):
     global cuentas, nextId
     for i in range(numero_de_cuentas):
         dinero_inicial = random.randint(10000, 1000000)
@@ -36,6 +37,13 @@ def retirar(iban, cantidad):
     for i in range(nextId):
         if cuentas[i]['IBAN'] == iban:
             if cuentas[i]['Saldo'] >= cantidad:
+                if cuentas[i]['Tipo'] == 'Plazo Fijo':
+                    if datetime.date.today() <= fecha_plazo_fijo:
+                        cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad
+                    else:
+                        cantidad_ = cantidad + (cantidad * 0.05)
+                        cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad_
+                        return print('Se han retirado ' + str(cantidad) + '.-€ de la cuenta ' + str(iban) + ' exitosamente con una penalización del 5%.\nSaldo actual: ' + str(cuentas[i]['Saldo']) + '.-€')
                 cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad
                 return print('Se han retirado ' + str(cantidad) + '.-€ de la cuenta ' + str(iban) + ' exitosamente.\nSaldo actual: ' + str(cuentas[i]['Saldo']) + '.-€')
             elif cuentas[i]['Tipo'] == 'VIP' and cuentas[i]['Saldo'] - cantidad >= saldo_negativo_maximo:
@@ -60,6 +68,11 @@ def transferir(emisor, receptor, cantidad):
             if cuentas[i]['Saldo'] >= cantidad:
                 for j in range(nextId):
                     if cuentas[j]['IBAN'] == receptor:
+                        if cuentas[i]['Tipo'] == 'Plazo Fijo':
+                            cantidad_ = cantidad + (cantidad * 0.05)
+                            cuentas[j]['Saldo'] = cuentas[j]['Saldo'] + cantidad
+                            cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad_
+                            return print('Se han trasferido de forma exitosa ' + str(cantidad) + '.-€ de la cuenta ' + str(emisor) + ' con un 5% de penalización a la cuenta ' + str(receptor) + '\nSaldo cuenta "' + str(emisor) + '": ' + str(cuentas[i]['Saldo']) + '.-€' + '\nSaldo cuenta "' + str(receptor) + '": ' + str(cuentas[j]['Saldo']) + '.-€' )
                         cuentas[j]['Saldo'] = cuentas[j]['Saldo'] + cantidad
                         cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad
                         return print('Se han trasferido de forma exitosa ' + str(cantidad) + '.-€ de la cuenta ' + str(emisor) + ' a la cuenta ' + str(receptor) + '\nSaldo cuenta "' + str(emisor) + '": ' + str(cuentas[i]['Saldo']) + '.-€' + '\nSaldo cuenta "' + str(receptor) + '": ' + str(cuentas[j]['Saldo']) + '.-€' )
@@ -76,6 +89,6 @@ def transferir(emisor, receptor, cantidad):
     return print('La cuenta del emisor no existe.')
 
 crearCuenta()
-retirar(cuentas[nextId - 3]['IBAN'], 1000)
+retirar(cuentas[nextId - 3]['IBAN'], cuentas[nextId - 3]['Saldo'] + 3000)
 ingresar(cuentas[nextId - 4]['IBAN'], 1000)
 transferir(cuentas[nextId - 4]['IBAN'], cuentas[nextId - 3]['IBAN'], 1000)
