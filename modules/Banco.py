@@ -112,7 +112,7 @@ def aplicacion():
         crearCuenta(1, 'Normal')
     for i in range(nextId - 1):
         iban.append(cuentas[i]['IBAN'])
-    retirar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], cuentas[nextId - random.randint(1, numero_de_cuentas)]['Saldo'] + random.randint(10000, 100000))
-    ingresar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], random.randint(10000, 100000))
-    transferir(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], random.randint(10000, 100000))
+    retirar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], 78)
+    ingresar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], 575)
+    transferir(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], 2000)
     
