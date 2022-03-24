@@ -1,0 +1,81 @@
+import random, datetime, names
+from shutil import register_unpack_format
+from faker import Faker
+fake = Faker()
+
+cuentas = {}
+nextId = 0
+saldo_negativo_maximo = -10000
+
+def crearCuenta(numero_de_cuentas = 1, tipo = 'Normal'):
+    global cuentas, nextId
+    for i in range(numero_de_cuentas):
+        dinero_inicial = random.randint(10000, 1000000)
+        numero_de_cuenta = random.randint(100000000000, 999999999999)
+        inicio_creacion = datetime.date(year=2008, month=1, day=1)
+        apertura = fake.date_between(start_date=inicio_creacion, end_date='+12y')
+        inicio_vencimiento = datetime.date(year=2022, month=1, day=1)
+        venicmiento = fake.date_between(start_date=inicio_vencimiento, end_date='+12y')
+        for i in range(nextId - 1):
+            while cuentas[i]['IBAN'] == numero_de_cuenta:
+                numero_de_cuenta = random.randint(100000000000, 999999999999)
+        cuentas[nextId] = {
+            'Nombre': names.get_full_name(),
+            'IBAN': numero_de_cuenta,
+            'Saldo': dinero_inicial,
+            'Tipo': tipo,
+            'Fecha de Apertura': apertura.strftime("%m/%d/%Y"),
+            'Fecha de Vencimiento': venicmiento.strftime("%m/%d/%Y")
+        }
+        nextId = nextId + 1
+        print(nextId)
+    print(cuentas)
+
+def retirar(iban, cantidad):
+    global cuentas, nextId
+    for i in range(nextId):
+        if cuentas[i]['IBAN'] == iban:
+            if cuentas[i]['Saldo'] >= cantidad:
+                cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad
+                return print('Se han retirado ' + str(cantidad) + '.-€ de la cuenta ' + str(iban) + ' exitosamente.\nSaldo actual: ' + str(cuentas[i]['Saldo']) + '.-€')
+            elif cuentas[i]['Tipo'] == 'VIP' and cuentas[i]['Saldo'] - cantidad >= saldo_negativo_maximo:
+                cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad
+                return print('Se han retirado ' + str(cantidad) + '.-€ de la cuenta VIP ' + str(iban) + ' exitosamente.\nSaldo actual: ' + str(cuentas[i]['Saldo']) + '.-€')
+            else:
+                return print('La cuenta no tiene suficiente saldo para retirar esa cantidad de dinero.\nSaldo actual: ' + str(cuentas[i]['Saldo']) + '.-€')
+    print('La cuenta' + str(iban) + ' no existe.')
+
+def ingresar(iban, cantidad):
+    global cuentas, nextId
+    for i in range(nextId):
+        if cuentas[i]['IBAN'] == iban:
+            cuentas[i]['Saldo'] = cuentas[i]['Saldo'] + cantidad
+            return print('Se han ingresado ' + str(cantidad) + '.-€ en la cuenta ' + str(iban) + ' exitosamente.\nSaldo actual: ' + str(cuentas[i]['Saldo']) + '.-€')
+    print('La cuenta' + str(iban) + ' no existe.')
+
+def transferir(emisor, receptor, cantidad):
+    global cuentas, nextId
+    for i in range(nextId):
+        if cuentas[i]['IBAN'] == emisor:
+            if cuentas[i]['Saldo'] >= cantidad:
+                for j in range(nextId):
+                    if cuentas[j]['IBAN'] == receptor:
+                        cuentas[j]['Saldo'] = cuentas[j]['Saldo'] + cantidad
+                        cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad
+                        return print('Se han trasferido de forma exitosa ' + str(cantidad) + '.-€ de la cuenta ' + str(emisor) + ' a la cuenta ' + str(receptor) + '\nSaldo cuenta "' + str(emisor) + '": ' + str(cuentas[i]['Saldo']) + '.-€' + '\nSaldo cuenta "' + str(receptor) + '": ' + str(cuentas[j]['Saldo']) + '.-€' )
+                return print('La cuenta del receptor no existe.')
+            elif cuentas[i]['Tipo'] == 'VIP' and cuentas[i]['Saldo'] - cantidad >= saldo_negativo_maximo:
+                for j in range(nextId):
+                    if cuentas[j]['IBAN'] == receptor:
+                        cuentas[j]['Saldo'] = cuentas[j]['Saldo'] + cantidad
+                        cuentas[i]['Saldo'] = cuentas[i]['Saldo'] - cantidad
+                        return print('Se han trasferido de forma exitosa ' + str(cantidad) + '.-€ de la cuenta ' + str(emisor) + ' a la cuenta ' + str(receptor) + '\nSaldo cuenta "' + str(emisor) + '": ' + str(cuentas[i]['Saldo']) + '.-€' + '\nSaldo cuenta "' + str(receptor) + '": ' + str(cuentas[j]['Saldo']) + '.-€' )
+                return print('La cuenta del receptor no existe.')
+            else:
+                return print('No tiene suficiente saldo para realizar esta transacción.')
+    return print('La cuenta del emisor no existe.')
+
+crearCuenta()
+retirar(cuentas[nextId - 3]['IBAN'], 1000)
+ingresar(cuentas[nextId - 4]['IBAN'], 1000)
+transferir(cuentas[nextId - 4]['IBAN'], cuentas[nextId - 3]['IBAN'], 1000)
