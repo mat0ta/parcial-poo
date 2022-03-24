@@ -1,4 +1,5 @@
 import random, datetime, names
+from secrets import randbits
 from shutil import register_unpack_format
 from faker import Faker
 fake = Faker()
@@ -8,7 +9,7 @@ nextId = 0
 saldo_negativo_maximo = -10000
 fecha_plazo_fijo = fake.date_between(start_date=datetime.date(year=2022, month=4, day=1), end_date='+2y')
 
-def crearCuenta(numero_de_cuentas = 10, tipo = 'VIP'):
+def crearCuenta(numero_de_cuentas = 1, tipo = 'Normal'):
     global cuentas, nextId
     for i in range(numero_de_cuentas):
         dinero_inicial = random.randint(10000, 1000000)
@@ -88,7 +89,32 @@ def transferir(emisor, receptor, cantidad):
                 return print('No tiene suficiente saldo para realizar esta transacción.')
     return print('La cuenta del emisor no existe.')
 
-crearCuenta()
-retirar(cuentas[nextId - 3]['IBAN'], cuentas[nextId - 3]['Saldo'] + 3000)
-ingresar(cuentas[nextId - 4]['IBAN'], 1000)
-transferir(cuentas[nextId - 4]['IBAN'], cuentas[nextId - 3]['IBAN'], 1000)
+# crearCuenta()
+# retirar(cuentas[nextId - 3]['IBAN'], cuentas[nextId - 3]['Saldo'] + 3000)
+# ingresar(cuentas[nextId - 4]['IBAN'], 1000)
+# transferir(cuentas[nextId - 4]['IBAN'], cuentas[nextId - 3]['IBAN'], 1000)
+
+def aplicacion():
+    iban = []
+    numero_de_cuentas = int(input('Bienvenido al Banco VVBA. Por favor, introduzca el número de cuentas que quiere crear: '))
+    cuentas_vip = int(input('Ahora introduzca el número de cuentas que quiere que sean VIP: '))
+    cuentas_plazo_fijo = int(input('Ahora introduzca el número de cuentas que quiere que sean a Plazo Fijo: '))
+    while cuentas_vip > numero_de_cuentas: 
+        cuentas_vip = int(input('Introduzca el número de cuentas que quiere que sean VIP que sea menor al número de cuentas creadas: '))
+    while cuentas_plazo_fijo > numero_de_cuentas: 
+        cuentas_plazo_fijo = int(input('Introduzca el número de cuentas que quiere que sean a Plazo Fijo que sea menor al número de cuentas creadas: '))
+    for i in range(cuentas_vip):
+        crearCuenta(1, 'VIP')
+    for i in range(cuentas_vip):
+        crearCuenta(1, 'Plazo Fijo')
+    cuentas_especiales = cuentas_vip + cuentas_plazo_fijo
+    for i in range(numero_de_cuentas - cuentas_especiales):
+        crearCuenta(1, 'Normal')
+    for i in range(nextId - 1):
+        iban.append(cuentas[i]['IBAN'])
+    retirar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], cuentas[nextId - random.randint(1, numero_de_cuentas)]['Saldo'] + random.randint(10000, 100000))
+    ingresar(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], random.randint(10000, 100000))
+    transferir(cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], cuentas[nextId - random.randint(1, numero_de_cuentas)]['IBAN'], random.randint(10000, 100000))
+
+aplicacion()
+    
