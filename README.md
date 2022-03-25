@@ -1,11 +1,10 @@
 <h1 align="center">PARCIAL-POO</h1>
----
 
 En este [repositorio](https://github.com/mat0ta/parcial-poo) quedan resueltos los ejercicios la tarea de esta semana. Puedes encontrar otros proyectos y tareas en mi perfil de GitHub: [mat0ta](https://github.com/mat0ta).
 
 <h2>Libro</h2>
 
-Hacer clase para describir un libro
+Haz un creador de libros
 
 La función empleada para crear dicho algoritmo es la siguiente:
 
@@ -23,9 +22,11 @@ def DescribirLibro():
 
     print(libro)
 
-```<h2>Animales</h2>
+```
 
-Hacer clase con animales y tipos de los mismos
+<h2>Animales</h2>
+
+Haz un organizador de animales
 
 La función empleada para crear dicho algoritmo es la siguiente:
 
@@ -47,9 +48,11 @@ def Declaracion():
             diccionario['Animal']['MamÃ­fero'][objetos[i]] = {}
         print(diccionario)
 
-```<h2>Banco</h2>
+```
 
-Hacer un sistema bancario
+<h2>Banco</h2>
+
+Han un banco con sistemas
 
 La función empleada para crear dicho algoritmo es la siguiente:
 
@@ -175,3 +178,4 @@ def aplicacion():
     
 
 ```
+
